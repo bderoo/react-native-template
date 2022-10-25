@@ -1,4 +1,4 @@
-# Recommendations
+# Comments
 As far as the organization of the theme I like most of what I see. I personally prefer to have the various shades of the same color organized inside an object instead of writing the number in the property name, e.g.:
 ```JS
 {
