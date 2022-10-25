@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { snapshot } from 'valtio'
 import type { ProxyPersistStorageEngine } from 'valtio-persist'
 import ProxyWithPersist, { PersistStrategy } from 'valtio-persist'
 
@@ -6,16 +7,15 @@ import { User } from '@/typings/User'
 
 type AuthStore = {
   accessToken: string | null,
-  refreshToken: string | undefined,
-  me: User | undefined,
+  me: User | null,
+  allowedUsers: Array<{ username: string, password: string }>,
 }
 
 const storage: ProxyPersistStorageEngine = {
   getItem: (name) => AsyncStorage.getItem(name),
   setItem: (name, value) => AsyncStorage.setItem(name, value),
   removeItem: (name) => AsyncStorage.removeItem(name),
-  // @ts-ignore
-  getAllKeys: () => AsyncStorage.getAllKeys(),
+  getAllKeys: () => AsyncStorage.getAllKeys() as Promise<string[]>,
 }
 
 export const authStore = ProxyWithPersist<AuthStore>({
@@ -23,30 +23,40 @@ export const authStore = ProxyWithPersist<AuthStore>({
   name: 'tokenStore',
   version: 0,
   initialState: {
-    accessToken: null,
-    refreshToken: undefined,
-    me: undefined,
+    accessToken: '',
+    me: null,
+    allowedUsers: [],
   },
   migrations: {},
-  persistStrategies: PersistStrategy.SingleFile,
+  persistStrategies: {
+    accessToken: PersistStrategy.SingleFile,
+    me: PersistStrategy.SingleFile,
+  },
 })
 
-export const login = async (username: string) => {
+export const register = async (username: string, password: string) => {
+  const { allowedUsers } = snapshot(authStore)
+  if (allowedUsers.find((user) => user.username === username)) {
+    throw new Error('User already exists')
+  }
+  authStore.allowedUsers.push({ username, password })
+}
+
+export const login = async (username: string, password: string) => {
+  const { allowedUsers } = snapshot(authStore)
+  if (!allowedUsers.some((user) => (
+    user.username === username && user.password === password))
+  ) {
+    throw new Error('Invalid username or password')
+  }
   authStore.me = {
     id: '1',
     username,
   }
-  authStore.accessToken = '123'
-  authStore.refreshToken = '123'
+  authStore.accessToken = `${password}123`
 }
 
 export const logout = async () => {
-  authStore.me = undefined
+  authStore.me = null
   authStore.accessToken = null
-  authStore.refreshToken = undefined
-}
-
-export const refreshAccessToken = async () => {
-  authStore.accessToken = '123'
-  authStore.refreshToken = '123'
 }

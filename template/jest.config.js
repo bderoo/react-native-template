@@ -1,7 +1,8 @@
 function makeModuleNameMapper(srcPath, tsconfigPath) {
   // Get paths from tsconfig
   // eslint-disable-next-line import/no-dynamic-require
-  const { paths } = require(tsconfigPath).compilerOptions
+  const { compilerOptions } = require(tsconfigPath)
+  const { paths } = compilerOptions
 
   const aliases = {
     '^@/(.*)$': '<rootDir>/src/$1',
@@ -19,10 +20,16 @@ function makeModuleNameMapper(srcPath, tsconfigPath) {
 
 module.exports = {
   collectCoverage: true,
+  coverageDirectory: './coverage/component',
   preset: 'react-native',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   transform: {
-    '^.+\\.ts?$': 'ts-jest',
+    '^.+\\.ts?$': [
+      'ts-jest',
+      {
+        tsconfig: 'tsconfig.spec.json',
+      },
+    ],
   },
   transformIgnorePatterns: ['node_modules/?!(static-container)'],
   verbose: true,

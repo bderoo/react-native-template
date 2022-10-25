@@ -1,8 +1,11 @@
+/* eslint no-console: 0 */ // disable console use in logger
 import { proxy, snapshot } from 'valtio'
 
+export type Level = 'log' | 'warn' | 'error' | 'silent'
+
 export type Log = {
-  level: 'log' | 'warn' | 'error' | 'silent',
-  message: any[]
+  level: Level,
+  message: unknown[]
   date: Date
 }
 
@@ -20,7 +23,7 @@ const printLog = console.log
 const printWarn = console.warn
 const printError = console.error
 
-const log = (level: 'log' | 'warn' | 'error' | 'silent', ...args: any) => {
+const log = (level: Level, ...args: Array<unknown>) => {
   const {
     logs,
     errorCount,

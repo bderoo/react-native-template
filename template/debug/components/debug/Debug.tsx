@@ -1,8 +1,9 @@
+/* eslint no-console: 0 */
 import Accordion from '@components/accordion/Accordion'
-import { PrimaryButton } from '@components/buttons/Button'
 import Logs from '@components/debug/logs'
 import JsonRepresentation from '@components/jsonRepresentation'
 import PageContainer from '@components/pageContainer/PageContainer'
+import PrimaryButton from '@components/primaryButton'
 import SvgIcon from '@components/svgIcon/SvgIcon'
 import { Body, H3 } from '@components/text'
 import { Icons } from '@constants/images'
@@ -10,6 +11,7 @@ import Clipboard from '@react-native-community/clipboard'
 import { Log, loggerStore } from '@stores/LoggerStore'
 import { navigationStore } from '@stores/NavigationStore'
 import React, { useCallback, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Modal, Pressable, ScrollView, View,
 } from 'react-native'
@@ -17,7 +19,6 @@ import Draggable from 'react-native-draggable'
 import { useSnapshot } from 'valtio'
 
 import config from '@/config'
-import Strings from '@/localization'
 import { Colors, Metrics } from '@/theme'
 
 import styles from './styles'
@@ -41,13 +42,16 @@ const valueOrNA = (label: string, value: string | undefined) => {
 
 const toNiceObject = (obj: Record<string, unknown>) => {
   const entries = Object.keys(obj)
-  const filtered = entries.filter((key) => typeof obj[key as keyof typeof obj] !== functionName)
+  const filtered = entries.filter(
+    (key) => typeof obj[key as keyof typeof obj] !== functionName,
+  )
     .map((key) => ({ [key]: obj[key as keyof typeof obj] }))
   return filtered.reduce((obj, item) => ({ ...obj, ...item }), {})
 }
 
 const Debug = ({ actions }: Props) => {
   const [modalVisible, setModalVisible] = React.useState(false)
+  const { t } = useTranslation('internal')
   const size = 50
 
   const navigationStoreSnap = useSnapshot(navigationStore)
@@ -111,7 +115,7 @@ const Debug = ({ actions }: Props) => {
         visible={modalVisible}
         onRequestClose={toggleModalVisible}
       >
-        <PageContainer viewWrapperStyle={{ paddingHorizontal: Metrics.xxxSmall }}>
+        <PageContainer viewWrapperStyle={styles.pageContainer}>
           <ScrollView>
             <View>
               <Pressable onPress={toggleModalVisible}>
@@ -128,7 +132,9 @@ const Debug = ({ actions }: Props) => {
                     title="Copy stores and logs"
                     onPress={() => {
                       console.warn('Copied to clipboard')
-                      Clipboard.setString(JSON.stringify({ appInfo, stores: {}, logs }, null, 2))
+                      Clipboard.setString(
+                        JSON.stringify({ appInfo, stores: {}, logs }, null, 2),
+                      )
                       Clipboard.setString(JSON.stringify({
                         appInfo, stores: { }, logs,
                       }, (key, value) => {
@@ -143,7 +149,7 @@ const Debug = ({ actions }: Props) => {
                 <View style={styles.actionItem}>
                   <Accordion
                     headerContent={(
-                      <H3>{Strings.internal.navigationStore}</H3>
+                      <H3>{t('navigationStore')}</H3>
                     )}
                     hiddenContent={(
                       <JsonRepresentation data={navigationStoreContent} />
@@ -158,7 +164,7 @@ const Debug = ({ actions }: Props) => {
                     hiddenContent={(
                       <Logs logs={logs as Array<Log>} />
                     )}
-                    bottomContainerStyle={{ paddingHorizontal: 0, paddingVertical: 0 }}
+                    bottomContainerStyle={styles.bottomContainer}
                   />
                 </View>
               </View>

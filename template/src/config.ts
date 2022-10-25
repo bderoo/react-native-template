@@ -4,6 +4,7 @@ import RNConfig from 'react-native-config'
 import packageJSON from '../package.json'
 
 const config = {
+  EXAMPLES: RNConfig.EXAMPLES === 'true',
   STORYBOOK: RNConfig.STORYBOOK === 'true',
   GIT_REVISION_SHA: RNConfig.GIT_REVISION_SHA || 'n/a',
   version: packageJSON.version,

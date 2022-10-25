@@ -8,8 +8,11 @@
  * @format
  */
 
+import './localization/localization'
+
 import DebugLoader from '@components/debugLoader'
 import { NavigationContainer } from '@react-navigation/native'
+import ExampleApp from '@root/examples/ExampleApp'
 import { navigationStore } from '@stores/NavigationStore'
 import React from 'react'
 import {
@@ -44,16 +47,34 @@ const App = () => {
 }
 
 const start = async () => {
+  // @@SECTION STORYBOOK
   if (Config.STORYBOOK) {
     const storybook = require('../storybook').start
     storybook()
-  } else {
+  }
+  // @@ENDSECTION STORYBOOK
+  // @@SECTION EXAMPLES
+  if (Config.EXAMPLES) {
+    const {
+      networkRequestStore,
+    } = await import('@stores/NetworkRequestStore')
+    const snap = snapshot(networkRequestStore)
+    snap.startInterceptor()
+    require('@stores/NavigationStore.debug')
+    AppRegistry.registerComponent('ProjectName', () => ExampleApp)
+  }
+  // @@ENDSECTION EXAMPLES
+  if (!Config.STORYBOOK && !Config.EXAMPLES) {
+    // @@SECTION DEBUG
     if (Config.DEBUG_ENABLED) {
-      const { networkRequestStore } = await import('@stores/NetworkRequestStore')
+      const {
+        networkRequestStore,
+      } = await import('@stores/NetworkRequestStore')
       const snap = snapshot(networkRequestStore)
       snap.startInterceptor()
       require('@stores/NavigationStore.debug')
     }
+    // @@ENDSECTION DEBUG
     AppRegistry.registerComponent('ProjectName', () => App)
   }
 }

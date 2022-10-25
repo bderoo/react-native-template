@@ -1,0 +1,24 @@
+import PageContainer from '@components/pageContainer'
+import { Body } from '@components/text'
+import { RouteProp } from '@react-navigation/native'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+
+import { Roots, RootStackParamList } from '@/navigation'
+
+import styles from './styles'
+
+type Props = {
+  route: RouteProp<RootStackParamList, Roots.{{properCase name}}>
+}
+
+const {{properCase name}} = ({ route }: Props) => {
+  const { t } = useTranslation(['common', '{{name}}'])
+  return (
+    <PageContainer>
+      <Body>{t('{{name}}:__name')}</Body>
+    </PageContainer>
+  )
+}
+
+export default {{properCase name}}

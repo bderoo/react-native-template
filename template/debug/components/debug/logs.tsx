@@ -1,5 +1,6 @@
-import { PrimaryButton } from '@components/buttons/Button'
 import JsonRepresentation from '@components/jsonRepresentation'
+import { Data } from '@components/jsonRepresentation/JsonRepresentation'
+import PrimaryButton from '@components/primaryButton'
 import { Body } from '@components/text'
 import Clipboard from '@react-native-community/clipboard'
 import { NavigationAction } from '@react-navigation/native'
@@ -19,19 +20,42 @@ type Props = {
   logs: Array<LogType>,
 }
 
-type State = {
-  search: string,
-}
+const isNavigationAction = (a: unknown): a is NavigationAction => (
+  typeof a !== 'string'
+    && !(a instanceof AxiosError)
+    && !Array.isArray(a)
+)
 
-const isNavigationAction = (a: any): a is NavigationAction => a.type !== undefined && typeof a.type === 'string'
+const Log = ({ log, idx }: { log: LogType, idx: number }) => (
+  <LevelView key={idx} level={log.level}>
+    <View style={{ flexDirection: 'row' }}>
+      <View style={{ flex: 1 }}>
+        {formatMessage(format(log.date, 'HH:mm:ss.SSSS'))}
+      </View>
+      <PrimaryButton
+        onPress={() => {
+          Clipboard.setString(JSON.stringify(log.message, null, 2))
+        }}
+        title="Copy"
+        style={() => ({
+          height: 24,
+          width: 80,
+        })}
+      />
+    </View>
+    {formatMessage(log.message, log.level)}
+  </LevelView>
+)
 
-const formatMessage = (message: AxiosError | NavigationAction | Array<string> | string, level: 'info' | 'error' | 'warn' | 'log' | 'silent' = 'log'): React.ReactElement => {
+const formatMessage = (
+  message: unknown,
+  level: 'info' | 'error' | 'warn' | 'log' | 'silent' = 'log',
+): GenericComponent => {
   const textColor = Colors.white
   if (typeof message === 'string') {
     return <Body key={Math.random()} color={textColor}>{message}</Body>
   }
   if (Array.isArray(message)) {
-    // @ts-ignore
     return message.map((m) => formatMessage(m, level))
   }
   if (message instanceof AxiosError) {
@@ -41,8 +65,9 @@ const formatMessage = (message: AxiosError | NavigationAction | Array<string> | 
           <Body color={textColor}>Error</Body>
           <Body color={textColor}>{`Url - ${message.request._url}}`}</Body>
           <Body color={textColor}>Response</Body>
-          {/* @ts-ignore */}
-          <JsonRepresentation data={message.response} />
+          <JsonRepresentation
+            data={message.response as unknown as Record<string, unknown>}
+          />
         </View>
       )
     }
@@ -52,7 +77,6 @@ const formatMessage = (message: AxiosError | NavigationAction | Array<string> | 
       <View key={Math.random()}>
         <Body color={textColor}>{`Navigation Event: ${message.type}`}</Body>
         {message.payload && (
-          // @ts-ignore
           <JsonRepresentation data={message.payload} />
         )}
         {message.source && (
@@ -64,66 +88,16 @@ const formatMessage = (message: AxiosError | NavigationAction | Array<string> | 
       </View>
     )
   }
-  // @ts-ignore
-  return <JsonRepresentation key={Math.random()} data={message} />
+
+  return <JsonRepresentation key={Math.random()} data={message as Data} />
 }
 
-class Logs extends React.Component<Props, State> {
-  static renderLog({
-    item: log,
-    index: idx,
-  }: { item: LogType, index: number }): JSX.Element {
-    const {
-      message,
-      level,
-    } = log
-    return (
-      // @ts-ignore
-      <LevelView key={idx} level={log.level}>
-        <View style={{ flexDirection: 'row' }}>
-          <View style={{ flex: 1 }}>
-            {formatMessage(format(log.date, 'HH:mm:ss.SSSS'))}
-          </View>
-          <PrimaryButton
-            onPress={() => {
-              Clipboard.setString(JSON.stringify(message, null, 2))
-            }}
-            title="Copy"
-            style={() => ({
-              height: 24,
-              width: 80,
-            })}
-          />
-        </View>
-        {formatMessage(message, level)}
-      </LevelView>
-    )
-  }
-
-  constructor(props: Props) {
-    super(props)
-    this.state = {
-      search: '',
-    }
-  }
-
-  render(): JSX.Element {
-    const { logs } = this.props
-    const { search } = this.state
-
-    const searchedLogs = search ? logs.filter((i) => `${i.message}`.indexOf(search) >= 0) : logs
-
-    return (
-      <SafeAreaView>
-        {
-          searchedLogs.map((l, i) => Logs.renderLog({
-            item: l,
-            index: i,
-          }))
-        }
-      </SafeAreaView>
-    )
-  }
-}
+const Logs = ({ logs }: Props) => (
+  <SafeAreaView>
+    {logs.map((l, i) => (
+      <Log key={`${l.date}${Math.random()}`} log={l} idx={i} />
+    ))}
+  </SafeAreaView>
+)
 
 export default Logs

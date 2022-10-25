@@ -13,11 +13,9 @@ navigationRef.addListener('__unsafe_action__', (e) => {
   }]
   if (e.data.action.type === 'NAVIGATE'
     && e.data.action.payload
-    // @ts-ignore
-    && e.data.action.payload.name
+    && (e.data.action.payload as {name: string}).name // god I hate typescript
   ) {
-    // @ts-ignore
-    const newName = e.data.action.payload.name
+    const newName = (e.data.action.payload as {name: string}).name
     navigationStore.currentScreen = newName
     navigationStore.screenHistory = [...screenHistory, newName]
   } else if (e.data.action.type === 'GO_BACK') {

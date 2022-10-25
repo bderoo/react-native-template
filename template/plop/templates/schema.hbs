@@ -1,0 +1,10 @@
+import Fields from '@schemas/Fields'
+import * as yup from 'yup'
+
+const schema = yup.object({
+{{#each fields}}
+  [Fields.{{field.name}}]: yup.{{field.yupType}}().required(),
+{{/each}}
+})
+
+export default schema

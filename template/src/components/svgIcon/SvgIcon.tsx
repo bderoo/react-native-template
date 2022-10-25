@@ -16,7 +16,7 @@ const SvgIcon = ({
   width = Metrics.smallIconHeight,
   height = Metrics.smallIconHeight,
   color,
-}: Props): JSX.Element => (
+}: Props) => (
   <SvgXml width={width} height={height} xml={image(color)} />
 )
 

@@ -3,7 +3,11 @@ import { StyleSheet } from 'react-native'
 
 import { Colors, Metrics } from '@/theme'
 
-export const StyledSafeAreaView = styled.SafeAreaView(({ center }: { center: boolean | undefined }) => ({
+type Props = {
+  center?: boolean
+}
+
+export const StyledSafeAreaView = styled.SafeAreaView(({ center }: Props) => ({
   flex: 1,
   justifyContent: center ? 'center' : undefined,
   backgroundColor: Colors.backgroundGray,
@@ -17,17 +21,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: Metrics.small,
     paddingVertical: Metrics.small,
     minHeight: Metrics.safeViewContainerHeight - 56,
-  },
-  errorContainer: {
-    backgroundColor: Colors.error,
-    width: Metrics.screenWidth,
-    paddingVertical: Metrics.small,
-    position: 'absolute',
-    zIndex: 2,
-  },
-  errorText: {
-    alignSelf: 'center',
-    textTransform: 'uppercase',
   },
   spinner: {
     position: 'absolute',

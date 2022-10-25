@@ -22,14 +22,18 @@ const jsonTheme = {
   base0F: '#cc6633',
 }
 
+export type Data = unknown[] | string | number | undefined | null
+  | Map<unknown, unknown> | Set<unknown> | boolean | Date | symbol
+  | Record<string | number, unknown> | object
+
 type Props = {
-  data: Record<string, unknown>
+  data: Data
   hideRoot?: boolean
 }
 
 const JsonRepresentation = ({ data, hideRoot }: Props) => (
   <JSONTree
-    data={data}
+    data={data as Record<string, unknown>}
     theme={jsonTheme}
     invertTheme={false}
     hideRoot={hideRoot}

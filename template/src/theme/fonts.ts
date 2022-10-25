@@ -3,6 +3,8 @@ import { StyleSheet } from 'react-native'
 import Colors from './colors'
 import { tabletOrPhone } from './metrics'
 
+export type FontWeightT = '300' | '400' | '500' | '600' | '700'
+
 export const FontFamilies = {
   italic: 'Poppins-Italic',
   black: 'Poppins-Black', // 900
@@ -36,7 +38,7 @@ export const LineHeight = {
   small: (fontSize = FontSize.small): number => fontSize * 1.5,
 }
 
-export const FontWeight: Record<string, '300' | '400' | '500' | '600' | '700'> = {
+export const FontWeight: Record<string, FontWeightT> = {
   light: '300',
   regular: '400',
   medium: '500',
@@ -46,25 +48,25 @@ export const FontWeight: Record<string, '300' | '400' | '500' | '600' | '700'> =
 
 export const Fonts = StyleSheet.create({
   h1: {
-    color: Colors.charcoal,
+    color: Colors.white,
     fontSize: FontSize.h1,
     lineHeight: LineHeight.h1(),
     fontFamily: FontFamilies.medium,
   },
   h2: {
-    color: Colors.charcoal,
+    color: Colors.white,
     fontSize: FontSize.h2,
     lineHeight: LineHeight.h2(),
     fontFamily: FontFamilies.medium,
   },
   h3: {
-    color: Colors.charcoal,
+    color: Colors.white,
     fontSize: FontSize.h3,
     lineHeight: LineHeight.h3(),
     fontFamily: FontFamilies.medium,
   },
   h4: {
-    color: Colors.charcoal,
+    color: Colors.white,
     fontSize: FontSize.h4,
     lineHeight: LineHeight.h4(),
     fontWeight: '300',
@@ -78,14 +80,14 @@ export const Fonts = StyleSheet.create({
     fontFamily: FontFamilies.regular,
   },
   bodyMedium: {
-    color: Colors.charcoal,
+    color: Colors.white,
     fontSize: FontSize.body,
     lineHeight: LineHeight.body(),
     fontWeight: '500',
     fontFamily: FontFamilies.semi,
   },
   overline: {
-    color: Colors.charcoal,
+    color: Colors.white,
     fontSize: FontSize.body,
     lineHeight: LineHeight.body(),
     fontWeight: '300',
@@ -93,19 +95,19 @@ export const Fonts = StyleSheet.create({
     fontFamily: FontFamilies.light,
   },
   span: {
-    color: Colors.charcoal,
+    color: Colors.white,
     fontSize: FontSize.span,
     lineHeight: LineHeight.span(),
     fontWeight: '500',
     fontFamily: FontFamilies.semi,
   },
   label: {
-    color: Colors.accentGray3,
+    color: Colors.white,
     fontSize: FontSize.label,
     fontFamily: FontFamilies.regular,
   },
   small: {
-    color: Colors.charcoal,
+    color: Colors.white,
     fontSize: FontSize.small,
     lineHeight: LineHeight.small(),
     fontWeight: '300',

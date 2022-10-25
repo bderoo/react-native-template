@@ -13,18 +13,21 @@
     "moduleResolution": "node",
     "noEmit": true,
     "strict": true,
+    "strictNullChecks": true,
     "resolveJsonModule": true,
     "target": "esnext",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*", "debug/*", "generated/*"],
+      "@/*": ["examples/*", "src/*", "debug/*", "generated/*"],
       "@root/*": ["./*"],
-      "@components/*": ["src/components/*", "debug/components/*", "generated/components/*"],
-      "@screens/*": ["src/screens/*", "debug/screens/*", "generated/screens/*"],
-      "@stores/*": ["src/stores/*", "debug/stores/*", "generated/stores/*"],
-      "@theme/*": ["src/theme/*", "debug/theme/*", "generated/theme/*"],
-      "@constants/*": ["src/constants/*", "debug/constants/*", "generated/constants/*"],
-      "@navigation/*": ["src/navigation/*", "debug/navigation/*", "generated/navigation/*"]
+      "@components/*": ["examples/components/*", "src/components/*", "debug/components/*", "generated/components/*", "internal/components/*", "global/components/*"],
+      "@screens/*": ["examples/screens/*", "src/screens/*", "debug/screens/*", "generated/screens/*", "internal/screens/*", "global/screens/*"],
+      "@stores/*": ["examples/stores/*", "src/stores/*", "debug/stores/*", "generated/stores/*", "internal/stores/*", "global/stores/*"],
+      "@theme/*": ["examples/theme/*", "src/theme/*", "debug/theme/*", "generated/theme/*", "internal/theme/*", "global/theme/*"],
+      "@constants/*": ["examples/constants/*", "src/constants/*", "debug/constants/*", "generated/constants/*", "internal/constants/*", "global/constants/*"],
+      "@navigation/*": ["examples/navigation/*", "src/navigation/*", "debug/navigation/*", "generated/navigation/*", "internal/navigation/*", "global/navigation/*"],
+      "@schemas/*": ["examples/schemas/*", "src/schemas/*", "debug/schemas/*", "generated/schemas/*", "internal/schemas/*", "global/schemas/*"],
+      "@localization/*": ["examples/localization/*", "src/localization/*", "debug/localization/*", "generated/localization/*", "internal/localization/*", "global/localization/*"]
     }
   },
   "files": [
@@ -32,12 +35,15 @@
   ],
   "rootDirs": [
     "src",
+    "debug",
     "generated",
-    "debug"
+    "internal",
+    "global"
   ],
   "include": [
     "src/*",
-    "debug/*"
+    "debug/*",
+    "@types"
   ],
   "exclude": [
     "node_modules",

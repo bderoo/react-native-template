@@ -1,17 +1,18 @@
-import { PrimaryButton } from '@components/buttons/Button'
+/* eslint no-console: 0 */
+/* eslint @typescript-eslint/ban-ts-comment: 0 */ // maybe some day, but not today
 import JsonRepresentation from '@components/jsonRepresentation'
 import NetworkRequestBasicInfo from '@components/networkRequestBasicInfo'
+import PrimaryButton from '@components/primaryButton'
 import { Body, H3 } from '@components/text'
 import Clipboard from '@react-native-community/clipboard'
 import { NetworkRequest } from '@stores/NetworkRequestStore'
 import React, {
   useCallback, useEffect, useMemo, useState,
 } from 'react'
+import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 // @ts-ignore
 import BlobFileReader from 'react-native/Libraries/Blob/FileReader'
-
-import Strings from '@/localization'
 
 import styles from './styles'
 
@@ -20,26 +21,40 @@ type Props = {
 }
 
 const NetworkRequestInfo = ({ request }: Props) => {
+  const { t } = useTranslation('internal')
   const [response, setResponse] = useState<string>()
-  const escapeQuotes = useCallback((str: string) => str.replace?.(/'/g, '\\\''), [])
+  const escapeQuotes = useCallback((str: string) => (
+    str.replace?.(/'/g, '\\\'')
+  ), [])
 
   const curl = useMemo(() => {
-    let headersPart = request.requestHeaders && Object.entries(request.requestHeaders)
-      .map(([key, value]) => `'${key}: ${escapeQuotes(value)}'`)
-      .join(' -H ')
+    let headersPart = request.requestHeaders
+      && Object.entries(request.requestHeaders)
+        .map(([key, value]) => `'${key}: ${escapeQuotes(value)}'`)
+        .join(' -H ')
     headersPart = headersPart ? `-H ${headersPart}` : ''
 
     const body = request.dataSent && escapeQuotes(request.dataSent)
 
-    const methodPart = request.method !== 'GET' ? `-X${request.method.toUpperCase()}` : ''
+    const methodPart = request.method !== 'GET'
+      ? `-X${request.method.toUpperCase()}` : ''
     const bodyPart = body ? `-d '${body}'` : ''
 
-    const parts = ['curl', methodPart, headersPart, bodyPart, `'${request.url}'`]
+    const parts = [
+      'curl',
+      methodPart,
+      headersPart,
+      bodyPart,
+      `'${request.url}'`,
+    ]
 
     return parts.filter(Boolean).join(' ')
   }, [request])
 
-  const renderString = useCallback((jsonString: string | undefined, responseBodyType: string | null) => {
+  const renderString = useCallback((
+    jsonString: string | undefined,
+    responseBodyType: string | null,
+  ) => {
     if (jsonString) {
       if (responseBodyType === 'application/json') {
         try {
@@ -72,13 +87,13 @@ const NetworkRequestInfo = ({ request }: Props) => {
     })
   }, [])
 
-  const fromEntries = useCallback((arr: any[]) => {
-    arr.reduce((acc, [k, v]) => {
-      acc[k] = v
-      return acc
-    }, {})
-  }, [])
+  const fromEntries = useCallback((arr: Iterable<never>[]) => arr
+    .reduce((acc, [k, v]) => ({
+      ...acc,
+      [k]: v,
+    }), {}), [])
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const parseData = useCallback((data: any) => {
     try {
       if (data?._parts?.length) {
@@ -90,7 +105,9 @@ const NetworkRequestInfo = ({ request }: Props) => {
     }
   }, [])
 
-  const stringify = useCallback((str?: string) => JSON.stringify(parseData(str), null, 2), [])
+  const stringify = useCallback((str?: string) => (
+    JSON.stringify(parseData(str), null, 2)
+  ), [])
 
   const responseBodyString = useCallback(async () => {
     if (request.responseType === 'blob') {
@@ -118,10 +135,11 @@ const NetworkRequestInfo = ({ request }: Props) => {
   return (
     <View>
       <NetworkRequestBasicInfo request={request} />
-      {request.requestHeaders && Object.keys(request.requestHeaders).length > 0 && (
+      {request.requestHeaders
+        && Object.keys(request.requestHeaders).length > 0 && (
         <>
           <View style={styles.header}>
-            <H3>{Strings.internal.requestHeaders}</H3>
+            <H3>{t('requestHeaders')}</H3>
           </View>
           <View>
             {Object.keys(request.requestHeaders).map((key) => (
@@ -136,10 +154,11 @@ const NetworkRequestInfo = ({ request }: Props) => {
           </View>
         </>
       )}
-      {request.responseHeaders && Object.keys(request.responseHeaders).length > 0 && (
+      {request.responseHeaders
+        && Object.keys(request.responseHeaders).length > 0 && (
         <>
           <View style={styles.header}>
-            <H3>{Strings.internal.responseHeaders}</H3>
+            <H3>{t('responseHeaders')}</H3>
           </View>
           <View>
             {Object.keys(request.responseHeaders).map((key) => (
@@ -157,7 +176,7 @@ const NetworkRequestInfo = ({ request }: Props) => {
       {request.dataSent && (
         <>
           <View style={styles.header}>
-            <H3>{Strings.internal.requestBody}</H3>
+            <H3>{t('requestBody')}</H3>
           </View>
           <View>
             {requestBody}
@@ -167,7 +186,7 @@ const NetworkRequestInfo = ({ request }: Props) => {
       {request.response && (
         <>
           <View style={styles.header}>
-            <H3>{Strings.internal.responseBody}</H3>
+            <H3>{t('responseBody')}</H3>
           </View>
           {response && (
             <View>

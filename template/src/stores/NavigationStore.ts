@@ -1,24 +1,23 @@
-import { createNavigationContainerRef, NavigationContainerRefWithCurrent } from '@react-navigation/native'
+import {
+  createNavigationContainerRef,
+  NavigationContainerRefWithCurrent,
+} from '@react-navigation/native'
 import {
   proxy, ref,
 } from 'valtio'
 
-import Config from '@/config'
 import { Roots, RootStackParamList } from '@/navigation'
 
 const navigationRef = createNavigationContainerRef<RootStackParamList>()
 
-export const navigate = (name: keyof RootStackParamList, params?: any) => {
-  navigationRef.navigate(name as string, params)
-}
-
-export const goBack = () => {
-  navigationRef.goBack()
+type NavigationHistoryItem = {
+  time: number,
+  action: unknown,
 }
 
 type NavigationStore = {
   navigation: NavigationContainerRefWithCurrent<RootStackParamList>
-  actionHistory: Array<any>
+  actionHistory: Array<NavigationHistoryItem>
   screenHistory: Array<keyof RootStackParamList>
   currentScreen: keyof RootStackParamList
 }
@@ -29,3 +28,11 @@ export const navigationStore = proxy<NavigationStore>({
   screenHistory: [],
   currentScreen: Roots.InitialRoute,
 })
+
+export const navigate = (name: keyof RootStackParamList, params?: object) => {
+  navigationRef.navigate(name as string, params)
+}
+
+export const goBack = () => {
+  navigationRef.goBack()
+}

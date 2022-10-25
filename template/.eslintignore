@@ -1,2 +1,6 @@
 **/*{.,-}min.js
 storybook/storyLoader.js
+
+# some day I'll get around to using a proper build system
+plopfile.js
+plop/**/*.js

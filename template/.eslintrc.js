@@ -18,6 +18,23 @@ module.exports = {
     'babel',
     '@typescript-eslint',
     'simple-import-sort',
+    'detox',
+  ],
+  overrides: [
+    {
+      files: ['*.e2e.js'],
+      env: {
+        'detox/detox': true,
+        jest: true,
+        'jest/globals': true,
+      },
+    },
+    {
+      files: ['src/localization/**/*.ts'],
+      rules: {
+        'max-len': ['off'],
+      },
+    },
   ],
   rules: {
     'no-restricted-imports': [
@@ -42,12 +59,8 @@ module.exports = {
     'jsx-a11y/anchor-is-valid': [
       'error',
       {
-        components: [
-          'Link',
-        ],
-        specialLink: [
-          'to',
-        ],
+        components: ['Link'],
+        specialLink: ['to'],
       },
     ],
     'jsx-a11y/label-has-for': [
@@ -65,25 +78,18 @@ module.exports = {
         allowChildren: false,
       },
     ],
-    semi: [
-      'error',
-      'never',
-    ],
+    semi: ['error', 'never'],
     'max-len': [
-      1,
-      200,
+      'warn',
+      {
+        code: 80,
+        ignoreComments: true,
+      },
     ],
-    'max-lines': [
-      'error',
-      400,
-    ],
+    'max-lines': ['error', 400],
     'global-require': 0,
-    'no-underscore-dangle': [
-      'off',
-    ],
-    'react/no-unescaped-entities': [
-      'off',
-    ],
+    'no-underscore-dangle': ['off'],
+    'react/no-unescaped-entities': ['off'],
     'no-plusplus': [
       'error',
       {
@@ -148,6 +154,7 @@ module.exports = {
           '**/*.e2e.ts',
           '**/*.test.ts',
           '**/*.test.tsx',
+          'e2e/**',
         ],
       },
     ],

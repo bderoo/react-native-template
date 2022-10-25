@@ -1,0 +1,15 @@
+import PageContainer from '@components/pageContainer'
+import { storiesOf } from '@storybook/react-native'
+import * as React from 'react'
+
+import {{properCase name}} from '.'
+
+storiesOf('NEEDS_CATEGORY', module)
+  .addDecorator((story) => (
+    <PageContainer>
+      {story()}
+    </PageContainer>
+  ))
+  .add('{{spaceCase name}}', () => (
+    <{{properCase name}} />
+  ))

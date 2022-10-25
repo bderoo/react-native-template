@@ -1,0 +1,65 @@
+{{#each orderedComponentImports}}
+import {{this}} from '@components/{{camelCase this}}'
+{{/each}}
+import PrimaryButton from '@components/primaryButton'
+import { yupResolver } from '@hookform/resolvers/yup'
+import Fields from '@schemas/Fields'
+import React from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
+
+import Strings from '@/localization'
+
+import schema from './schema'
+
+export type FormValues = {
+{{#each fields}}
+  {{field.name}}: {{field.type}}
+{{/each}}
+}
+
+const defaultValues = {
+{{#each fields}}
+  [Fields.{{field.name}}]: {{{field.initialValue}}},
+{{/each}}
+}
+
+type Props = {
+  handleSubmit: (values: FormValues) => void
+}
+
+const Form = ({ handleSubmit }: Props) => {
+  const methods = useForm<FormValues, symbol>({
+    defaultValues,
+    resolver: yupResolver(schema),
+    mode: 'all',
+  })
+
+  const { errors } = methods.formState
+  const hasErrors = Object.keys(errors).length > 0
+
+  const onSubmit = (data: FormValues) => {
+    handleSubmit(data)
+  }
+
+  return (
+    <FormProvider {...methods}>
+      {{#each fields}}
+      <{{field.componentName}}
+        label={Strings.forms.{{../name}}.
+        {{~field.name~}}
+        }
+        name={Fields.
+        {{~field.name~}}
+        }
+      />
+      {{/each}}
+      <PrimaryButton
+        title={Strings.forms.{{name}}.submit}
+        disabled={hasErrors}
+        onPress={methods.handleSubmit(onSubmit)}
+      />
+    </FormProvider>
+  )
+}
+
+export default Form

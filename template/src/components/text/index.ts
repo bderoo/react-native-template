@@ -13,18 +13,18 @@ type TextProps = {
   /** Override pass arbitrary styles that are spread last */
   style?: TextStyle,
   /** Override font weight */
-  fontWeight?: string,
+  fontWeight?: 'normal' | 'bold' | '100' | '200'
+    | '300' | '400' | '500' | '600' | '700' | '800' | '900',
   /** Letter Spacing */
   letterSpacing?: number,
   /** Override line height */
   lineHeight?: number,
   /** Override alignment */
-  textAlign?: string,
+  textAlign?: 'auto' | 'left' | 'right' | 'center' | 'justify',
   /** Text transform */
-  textTransform?: string,
+  textTransform?: 'none' | 'capitalize' | 'uppercase' | 'lowercase',
 }
 
-// @ts-ignore
 export const StyledText = () => styled.Text(({
   color,
   fontSize,

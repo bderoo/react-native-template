@@ -1,4 +1,5 @@
-// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore no idea why it thinks it does not exist
 import XHRInterceptor from 'react-native/Libraries/Network/XHRInterceptor'
 import { proxy } from 'valtio'
 
@@ -48,9 +49,21 @@ type NetworkRequestStore = {
   getRequest: (id?: number) => NetworkRequest | undefined
   updateRequest: (index: number, update: Partial<NetworkRequest>) => void
   setRequestHeader: (header: string, value: string, xhr: XHR) => void
-  setResponseHeader: (responseContentType: string, responseSize: number, responseHeaders: Headers, xhr: XHR) => void
+  setResponseHeader: (
+    responseContentType: string,
+    responseSize: number,
+    responseHeaders: Headers,
+    xhr: XHR
+  ) => void
   sendCallback: (data: string, xhr: XHR) => void
-  setResponse: (status: number, timeout: string, response: string, responseURL: string, responseType: string, xhr: XHR) => void
+  setResponse: (
+    status: number,
+    timeout: string,
+    response: string,
+    responseURL: string,
+    responseType: string,
+    xhr: XHR
+  ) => void
 }
 
 const urlAliases = {
@@ -66,85 +79,110 @@ const simplifyUrl = (url: string) => {
   return url
 }
 
-export const networkRequestStore: NetworkRequestStore = proxy<NetworkRequestStore>({
-  requests: [],
-  currentXHRId: 0,
-  xhrIdMap: {},
-  startInterceptor() {
-    XHRInterceptor.setOpenCallback(networkRequestStore.addRequest)
-    XHRInterceptor.setRequestHeaderCallback(networkRequestStore.setRequestHeader)
-    XHRInterceptor.setHeaderReceivedCallback(networkRequestStore.setResponseHeader)
-    XHRInterceptor.setSendCallback(networkRequestStore.sendCallback)
-    XHRInterceptor.setResponseCallback(networkRequestStore.setResponse)
-    XHRInterceptor.enableInterception()
-  },
-  addRequest(method: RequestMethod, url: string, xhr: XHR) {
-    const updatedXHRId = networkRequestStore.currentXHRId
-    xhr._index = networkRequestStore.currentXHRId
-    networkRequestStore.xhrIdMap[updatedXHRId] = networkRequestStore.requests.length
-    networkRequestStore.currentXHRId = updatedXHRId + 1
-    const newUrl = simplifyUrl(url)
-    const newRequest: NetworkRequest = {
-      id: updatedXHRId.toString(),
-      type: 'XMLHttpRequest',
-      method,
-      url: newUrl,
-    }
-    networkRequestStore.requests.push(newRequest)
-  },
-  getRequest(id: number | undefined) {
-    if (id === undefined) return undefined
-    const requestIndex = networkRequestStore.requests.length - networkRequestStore.xhrIdMap[id] - 1
-    return networkRequestStore.requests[requestIndex]
-  },
-  updateRequest(index: number, update: Partial<NetworkRequest>) {
-    const networkInfo = networkRequestStore.getRequest(index)
-    if (networkInfo) {
-      networkRequestStore.requests = networkRequestStore.requests.map((request, i) => {
-        if (i === index) {
-          return {
-            ...request,
-            ...update,
-          }
-        }
-        return request
-      })
-    }
-  },
-  setRequestHeader(header: string, value: string, xhr: XHR) {
-    const networkInfo = networkRequestStore.getRequest(xhr._index)
-    const oldRequest = networkRequestStore.requests.find((request) => request.id === networkInfo?.id)
-    if (oldRequest) {
-      const update = {
-        requestHeaders: {
-          ...oldRequest.requestHeaders,
-          [header]: value,
-        },
+export const networkRequestStore: NetworkRequestStore = (
+  proxy <NetworkRequestStore>({
+    requests: [],
+    currentXHRId: 0,
+    xhrIdMap: {},
+    startInterceptor() {
+      XHRInterceptor
+        .setOpenCallback(networkRequestStore.addRequest)
+      XHRInterceptor
+        .setRequestHeaderCallback(networkRequestStore.setRequestHeader)
+      XHRInterceptor
+        .setHeaderReceivedCallback(networkRequestStore.setResponseHeader)
+      XHRInterceptor
+        .setSendCallback(networkRequestStore.sendCallback)
+      XHRInterceptor
+        .setResponseCallback(networkRequestStore.setResponse)
+      XHRInterceptor
+        .enableInterception()
+    },
+    addRequest(method: RequestMethod, url: string, xhr: XHR) {
+      const updatedXHRId = networkRequestStore.currentXHRId
+      // eslint-disable-next-line no-param-reassign -- we need to update the object thanks to the XHRInterceptor
+      xhr._index = networkRequestStore.currentXHRId
+      networkRequestStore.xhrIdMap[updatedXHRId] = networkRequestStore
+        .requests.length
+      networkRequestStore.currentXHRId = updatedXHRId + 1
+      const newUrl = simplifyUrl(url)
+      const newRequest: NetworkRequest = {
+        id: updatedXHRId.toString(),
+        type: 'XMLHttpRequest',
+        method,
+        url: newUrl,
       }
-      networkRequestStore.updateRequest(xhr._index, update)
-    }
-  },
-  setResponseHeader(responseContentType: string, responseSize: number, responseHeaders: Headers, xhr: XHR) {
-    networkRequestStore.updateRequest(xhr._index, {
-      responseContentType,
-      responseSize,
-      responseHeaders: xhr.responseHeaders,
-    })
-  },
-  sendCallback(data: string, xhr: XHR) {
-    networkRequestStore.updateRequest(xhr._index, {
-      startTime: Date.now(),
-      dataSent: data,
-    })
-  },
-  setResponse(status: number, timeout: string, response: string, responseURL: string, responseType: string, xhr: XHR) {
-    networkRequestStore.updateRequest(xhr._index, {
-      endTime: Date.now(),
-      status,
-      timeout,
-      response,
-      responseURL,
-      responseType,
-    })
-  },
-})
+      networkRequestStore.requests.push(newRequest)
+    },
+    getRequest(id: number | undefined) {
+      if (id === undefined) return undefined
+      const requestIndex = networkRequestStore.requests.length
+      - networkRequestStore.xhrIdMap[id] - 1
+      return networkRequestStore.requests[requestIndex]
+    },
+    updateRequest(index: number, update: Partial<NetworkRequest>) {
+      const networkInfo = networkRequestStore.getRequest(index)
+      if (networkInfo) {
+        networkRequestStore.requests = networkRequestStore.requests
+          .map((request, i) => {
+            if (i === index) {
+              return {
+                ...request,
+                ...update,
+              }
+            }
+            return request
+          })
+      }
+    },
+    setRequestHeader(header: string, value: string, xhr: XHR) {
+      const networkInfo = networkRequestStore.getRequest(xhr._index)
+      const oldRequest = networkRequestStore.requests
+        .find((request) => request.id === networkInfo?.id)
+      if (oldRequest) {
+        const update = {
+          requestHeaders: {
+            ...oldRequest.requestHeaders,
+            [header]: value,
+          },
+        }
+        networkRequestStore.updateRequest(xhr._index, update)
+      }
+    },
+    setResponseHeader(
+      responseContentType: string,
+      responseSize: number,
+      responseHeaders: Headers,
+      xhr: XHR,
+    ) {
+      networkRequestStore.updateRequest(xhr._index, {
+        responseContentType,
+        responseSize,
+        responseHeaders: xhr.responseHeaders,
+      })
+    },
+    sendCallback(data: string, xhr: XHR) {
+      networkRequestStore.updateRequest(xhr._index, {
+        startTime: Date.now(),
+        dataSent: data,
+      })
+    },
+    setResponse(
+      status: number,
+      timeout: string,
+      response: string,
+      responseURL: string,
+      responseType: string,
+      xhr: XHR,
+    ) {
+      networkRequestStore.updateRequest(xhr._index, {
+        endTime: Date.now(),
+        status,
+        timeout,
+        response,
+        responseURL,
+        responseType,
+      })
+    },
+  })
+)
