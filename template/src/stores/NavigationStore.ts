@@ -10,6 +10,7 @@ const navigationRef = createNavigationContainerRef<RootStackParamList>()
 
 export const navigate = (name: keyof RootStackParamList, params?: any) => {
   navigationRef.navigate(name as string, params)
+  // If I understand correcty this action should also have an effect over the Navigation store or am I wrong?
 }
 
 export const goBack = () => {

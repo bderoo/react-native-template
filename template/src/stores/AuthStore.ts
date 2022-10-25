@@ -32,6 +32,7 @@ export const authStore = ProxyWithPersist<AuthStore>({
 })
 
 export const login = async (username: string) => {
+  // I think the approach of this library is pretty straightforward yet I would still use redux as it is the mostly well known one.
   authStore.me = {
     id: '1',
     username,

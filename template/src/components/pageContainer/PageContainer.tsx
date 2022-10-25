@@ -12,6 +12,7 @@ const PageContainer = ({
   safeAreaViewStyle,
   viewWrapperStyle,
   isLoading,
+  // Since there is a isLoading prop it might be good to have a loading message as well.
 }: {
   children?: React.ReactElement | Array<React.ReactElement | null> | null | ReactNode,
   center?: boolean,
@@ -28,6 +29,7 @@ const PageContainer = ({
     )}
     <StyledSafeAreaView center={center} style={safeAreaViewStyle}>
       <View style={[styles.pageContainer, style]}>
+        {/* I am really scared by such library. Maybe I would even separate between scrolling pages and non scrolling pages in order to avoid the abuse of scrollviews. */}
         <KeyboardAwareScrollView
           enableOnAndroid
           enableAutomaticScroll

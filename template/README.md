@@ -1,0 +1,2 @@
+# Recommendations
+I would generally not specify the type of return of the functional components as in the following example: `const DebugNavigator = (): JSX.Element => ...`. I would let Typescript infer it because I think it better as there are components that need to accept more mobile platform restricted types.
